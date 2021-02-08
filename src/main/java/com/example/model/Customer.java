@@ -1,12 +1,12 @@
 package com.example.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "clients")
-public class Client extends Model {
+@Table(name = "customer")
+public class Customer extends Model {
 
     private String surname;
     @Column(name = "first_name")
@@ -16,9 +16,14 @@ public class Client extends Model {
     private String phoneNumber;
     private String email;
     private String passport;
+    @OneToMany(mappedBy = "customer")
+    private List<Bank> entries;
+    @OneToMany(mappedBy = "customer")
+    private List<CreditOffer> creditOffers;
 
-    public Client() {
-
+    public Customer() {
+        entries = new ArrayList<>();
+        creditOffers = new ArrayList<>();
     }
 
     public String getSurname() {
@@ -67,5 +72,21 @@ public class Client extends Model {
 
     public void setPassport(String passport) {
         this.passport = passport;
+    }
+
+    public List<Bank> getEntries() {
+        return entries;
+    }
+
+    public void setEntries(List<Bank> entries) {
+        this.entries = entries;
+    }
+
+    public List<CreditOffer> getCreditOffers() {
+        return creditOffers;
+    }
+
+    public void setCreditOffers(List<CreditOffer> creditOffers) {
+        this.creditOffers = creditOffers;
     }
 }

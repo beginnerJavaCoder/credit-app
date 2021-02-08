@@ -1,32 +1,57 @@
 package com.example.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+//TODO think about using of BigDecimal
+//TODO maybe I should add limit for number of months (time limit for pay all the credit)
 @Entity
-@Table(name = "credits")
+@Table(name = "credit")
 public class Credit extends Model {
 
-    private Integer limit;
-    private Double percentage;
+    @Column(name = "lim")
+    private Double limit;
+    @Column(name = "interest_rate")
+    private Double interestRate;
+    @OneToMany(mappedBy = "credit")
+    private List<Bank> entries;
+    @OneToMany(mappedBy = "credit")
+    private List<CreditOffer> creditOffers;
 
     public Credit() {
-
+        entries = new ArrayList<>();
+        creditOffers = new ArrayList<>();
     }
 
-    public Integer getLimit() {
+    public Double getLimit() {
         return limit;
     }
 
-    public void setLimit(Integer limit) {
+    public void setLimit(Double limit) {
         this.limit = limit;
     }
 
-    public Double getPercentage() {
-        return percentage;
+    public Double getInterestRate() {
+        return interestRate;
     }
 
-    public void setPercentage(Double percentage) {
-        this.percentage = percentage;
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public List<Bank> getEntries() {
+        return entries;
+    }
+
+    public void setEntries(List<Bank> entries) {
+        this.entries = entries;
+    }
+
+    public List<CreditOffer> getCreditOffers() {
+        return creditOffers;
+    }
+
+    public void setCreditOffers(List<CreditOffer> creditOffers) {
+        this.creditOffers = creditOffers;
     }
 }

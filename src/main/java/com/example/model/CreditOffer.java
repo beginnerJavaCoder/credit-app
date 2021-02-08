@@ -1,30 +1,34 @@
 package com.example.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+//TODO don't forget about bidirectional references while adding entries!!!
 @Entity
-@Table(name = "credit_offers")
+@Table(name = "credit_offer")
 public class CreditOffer extends Model {
 
-    //TODO add references
-    private Client client;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "credit_id")
     private Credit credit;
-    @Column(name = "credit_sum")
-    private Integer creditSum;
-    private PaymentSchedule paymentSchedule;
+    @Column(name = "credit_amount")
+    private Double creditAmount;
+    @OneToMany(mappedBy = "creditOffer")
+    private List<Payment> paymentSchedule;
 
     public CreditOffer() {
-
+        paymentSchedule = new ArrayList<>();
     }
 
-    public Client getClient() {
-        return client;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public Credit getCredit() {
@@ -35,19 +39,19 @@ public class CreditOffer extends Model {
         this.credit = credit;
     }
 
-    public Integer getCreditSum() {
-        return creditSum;
+    public Double getCreditAmount() {
+        return creditAmount;
     }
 
-    public void setCreditSum(Integer creditSum) {
-        this.creditSum = creditSum;
+    public void setCreditAmount(Double creditAmount) {
+        this.creditAmount = creditAmount;
     }
 
-    public PaymentSchedule getPaymentSchedule() {
+    public List<Payment> getPaymentSchedule() {
         return paymentSchedule;
     }
 
-    public void setPaymentSchedule(PaymentSchedule paymentSchedule) {
+    public void setPaymentSchedule(List<Payment> paymentSchedule) {
         this.paymentSchedule = paymentSchedule;
     }
 }

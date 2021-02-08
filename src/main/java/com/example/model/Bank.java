@@ -1,27 +1,28 @@
 package com.example.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-//TODO think about reorganization of this class (it has no logic currently)
 @Entity
-@Table(name = "client_credit")
+@Table(name = "customer_credit")
 public class Bank extends Model {
 
-    //TODO write references for that
-    private Client client;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "credit_id")
     private Credit credit;
 
     public Bank() {
 
     }
 
-    public Client getClient() {
-        return client;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public Credit getCredit() {
