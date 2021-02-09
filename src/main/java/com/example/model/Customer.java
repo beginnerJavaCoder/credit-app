@@ -16,9 +16,10 @@ public class Customer extends Model {
     private String phoneNumber;
     private String email;
     private String passport;
-    @OneToMany(mappedBy = "customer")
+    //TODO maybe i shouldn't use cascade operations in this case
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bank> entries;
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CreditOffer> creditOffers;
 
     public Customer() {

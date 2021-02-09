@@ -16,7 +16,7 @@ public class CreditOffer extends Model {
     private Credit credit;
     @Column(name = "credit_amount")
     private Double creditAmount;
-    @OneToMany(mappedBy = "creditOffer")
+    @OneToMany(mappedBy = "creditOffer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> paymentSchedule;
 
     public CreditOffer() {

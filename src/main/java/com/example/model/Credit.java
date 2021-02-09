@@ -13,9 +13,9 @@ public class Credit extends Model {
     private Double limit;
     @Column(name = "interest_rate")
     private Double interestRate;
-    @OneToMany(mappedBy = "credit")
+    @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bank> entries;
-    @OneToMany(mappedBy = "credit")
+    @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CreditOffer> creditOffers;
 
     public Credit() {
