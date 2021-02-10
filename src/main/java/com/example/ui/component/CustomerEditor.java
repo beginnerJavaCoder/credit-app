@@ -1,4 +1,4 @@
-package com.example.component;
+package com.example.ui.component;
 
 import com.example.model.Customer;
 import com.example.repository.CustomerRepository;
