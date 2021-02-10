@@ -36,10 +36,6 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
     private Binder<Customer> binder = new Binder<>(Customer.class);
     private ChangeHandler changeHandler;
 
-    public interface ChangeHandler {
-        void onChange();
-    }
-
     @Autowired
     public CustomerEditor(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
