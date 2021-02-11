@@ -49,7 +49,7 @@ public class CustomerPanel extends VerticalLayout {
     private void configureGrid() {
         GridThemeConfigurer.configureTheme(grid);
 
-        grid.setColumns("id", "surname", "firstName", "patronymic", "passport", "phoneNumber", "email");
+        grid.setColumns("surname", "firstName", "patronymic", "passport", "phoneNumber", "email");
         grid.getColumnByKey("surname").setHeader("Фамилия");
         grid.getColumnByKey("firstName").setHeader("Имя");
         grid.getColumnByKey("patronymic").setHeader("Отчество");

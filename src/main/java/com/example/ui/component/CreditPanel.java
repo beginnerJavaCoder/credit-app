@@ -49,7 +49,7 @@ public class CreditPanel extends VerticalLayout {
     private void configureGrid() {
         GridThemeConfigurer.configureTheme(grid);
 
-        grid.setColumns("id", "limit", "interestRate");
+        grid.setColumns("limit", "interestRate");
         grid.getColumnByKey("limit").setHeader("Лимит по кредиту, ₽");
         grid.getColumnByKey("interestRate").setHeader("Процентная ставка, %");
     }
