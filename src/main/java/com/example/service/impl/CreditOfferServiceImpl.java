@@ -35,4 +35,9 @@ public class CreditOfferServiceImpl implements CreditOfferService {
     public Double getTotalAmountOfInterestRate(CreditOffer creditOffer) {
         return getTotalAmountOfCredit(creditOffer) - creditOffer.getCreditAmount();
     }
+
+    @Override
+    public void save(CreditOffer creditOffer) {
+        creditOfferRepository.save(creditOffer);
+    }
 }

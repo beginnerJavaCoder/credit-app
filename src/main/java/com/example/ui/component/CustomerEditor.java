@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -25,7 +26,7 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
     private TextField firstName = new TextField("Имя");
     private TextField patronymic = new TextField("Отчество");
     private TextField phoneNumber = new TextField("Номер телефона");
-    private TextField email = new TextField("Email");
+    private EmailField email = new EmailField("Email");
     private TextField passport = new TextField("Паспорт");
 
     private Button save = new Button("Save", VaadinIcon.CHECK.create());
@@ -40,6 +41,7 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
     public CustomerEditor(CustomerService customerService) {
         this.customerService = customerService;
 
+        email.setErrorMessage("Введите корректный email");
         add(surname, firstName, patronymic, phoneNumber, email, passport, actions);
 
         binder.bindInstanceFields(this);

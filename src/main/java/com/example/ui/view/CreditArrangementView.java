@@ -139,6 +139,7 @@ public class CreditArrangementView extends VerticalLayout {
         creditOffer = new CreditOffer();
         creditOffer.setCredit(chosenCredit);
         creditOffer.setCreditAmount(creditSum.getValue());
+        //TODO think about bidirectional relations (how to update it correctly?)
 //        chosenCredit.getCreditOffers().add(creditOffer);
         creditOffer.setCustomer(chosenCustomer);
 //        chosenCustomer.getCreditOffers().add(creditOffer);
@@ -146,7 +147,14 @@ public class CreditArrangementView extends VerticalLayout {
         Label l1 = new Label("Общая сумма" + creditOfferService.getTotalAmountOfCredit(creditOffer).toString());
         Label l2 = new Label("Сумма переплаты по процентам" + creditOfferService.getTotalAmountOfInterestRate(creditOffer).toString());
         Label l3 = new Label("Сумма ежемесячного платежа" + creditOfferService.getMonthlyPaymentAmount(creditOffer).toString());
+        Button arrangeCreditOffer = new Button("Оформить кредит");
+        arrangeCreditOffer.setWidth("15em");
+        arrangeCreditOffer.addClickListener(e -> {
+            creditOfferService.save(creditOffer);
+            removeAll();
+            add(new Label("Кредит успешно оформлен!"));
+        });
 
-        add(l1, l2, l3);
+        add(l1, l2, l3, arrangeCreditOffer);
     }
 }

@@ -2,6 +2,14 @@ package com.example.model;
 
 import javax.persistence.*;
 
+/*
+FIXME:
+ There is a fictive entity for requirements of the technical task.
+ Lists of all customers or credits are possible to get through
+ methods findAll() in necessary repository interfaces / services.
+ Also, mapping of customers and their credits are stored in creditOffer table.
+ So, this table is unnecessary (for now).
+ */
 @Entity
 @Table(name = "customer_credit")
 public class Bank extends Model {
