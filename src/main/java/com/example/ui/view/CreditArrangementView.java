@@ -3,11 +3,13 @@ package com.example.ui.view;
 import com.example.model.Credit;
 import com.example.model.CreditOffer;
 import com.example.model.Customer;
+import com.example.model.Payment;
 import com.example.service.CreditOfferService;
 import com.example.ui.component.CreditPanel;
 import com.example.ui.component.CustomerPanel;
 import com.example.ui.layout.MainLayout;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -143,10 +145,17 @@ public class CreditArrangementView extends VerticalLayout {
 //        chosenCredit.getCreditOffers().add(creditOffer);
         creditOffer.setCustomer(chosenCustomer);
 //        chosenCustomer.getCreditOffers().add(creditOffer);
-
+        creditOffer.setPaymentSchedule(creditOfferService.calculatePaymentSchedule(creditOffer));
         Label l1 = new Label("Общая сумма" + creditOfferService.getTotalAmountOfCredit(creditOffer).toString());
         Label l2 = new Label("Сумма переплаты по процентам" + creditOfferService.getTotalAmountOfInterestRate(creditOffer).toString());
         Label l3 = new Label("Сумма ежемесячного платежа" + creditOfferService.getMonthlyPaymentAmount(creditOffer).toString());
+
+        Grid<Payment> paymentGrid = new Grid<>(Payment.class);
+        paymentGrid.setColumns("sum", "sumOfRepaymentForCreditPercents", "sumOfRepaymentForCreditBody");
+        paymentGrid.getColumnByKey("sum").setHeader("Сумма платежа");
+        paymentGrid.getColumnByKey("sumOfRepaymentForCreditPercents").setHeader("Процентная часть");
+        paymentGrid.getColumnByKey("sumOfRepaymentForCreditBody").setHeader("Долговая часть");
+        paymentGrid.setItems(creditOffer.getPaymentSchedule());
         Button arrangeCreditOffer = new Button("Оформить кредит");
         arrangeCreditOffer.setWidth("15em");
         arrangeCreditOffer.addClickListener(e -> {
@@ -155,6 +164,6 @@ public class CreditArrangementView extends VerticalLayout {
             add(new Label("Кредит успешно оформлен!"));
         });
 
-        add(l1, l2, l3, arrangeCreditOffer);
+        add(l1, l2, l3, arrangeCreditOffer, paymentGrid);
     }
 }

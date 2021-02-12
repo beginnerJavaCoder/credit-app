@@ -3,7 +3,7 @@ package com.example.model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-//TODO don't forget about bidirectional references while adding entries!!!
+
 @Entity
 @Table(name = "credit_offer")
 public class CreditOffer extends Model {
@@ -16,7 +16,10 @@ public class CreditOffer extends Model {
     private Credit credit;
     @Column(name = "credit_amount")
     private Double creditAmount;
-    @OneToMany(mappedBy = "creditOffer", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "creditOffer",
+            cascade = {CascadeType.REMOVE, CascadeType.PERSIST},
+            orphanRemoval = true)
     private List<Payment> paymentSchedule;
 
     public CreditOffer() {
@@ -53,5 +56,8 @@ public class CreditOffer extends Model {
 
     public void setPaymentSchedule(List<Payment> paymentSchedule) {
         this.paymentSchedule = paymentSchedule;
+        for (Payment p : this.paymentSchedule) {
+            p.setCreditOffer(this);
+        }
     }
 }
