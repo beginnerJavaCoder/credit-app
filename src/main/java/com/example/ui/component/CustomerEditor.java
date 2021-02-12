@@ -1,7 +1,7 @@
 package com.example.ui.component;
 
 import com.example.model.Customer;
-import com.example.repository.CustomerRepository;
+import com.example.service.CustomerService;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 public class CustomerEditor extends VerticalLayout implements KeyNotifier {
 
-    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
     private Customer customer;
 
     private TextField surname = new TextField("Фамилия");
@@ -37,8 +37,8 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
     private ChangeHandler changeHandler;
 
     @Autowired
-    public CustomerEditor(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public CustomerEditor(CustomerService customerService) {
+        this.customerService = customerService;
 
         add(surname, firstName, patronymic, phoneNumber, email, passport, actions);
 
@@ -64,7 +64,10 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
         }
 
         if (changedCustomer.getId() != null) {
-            this.customer = customerRepository.findById(changedCustomer.getId()).orElse(changedCustomer);
+            this.customer = customerService.findById(changedCustomer.getId());
+            if (customer == null) {
+                customer = changedCustomer;
+            }
         } else {
             this.customer = changedCustomer;
         }
@@ -77,12 +80,12 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
     }
 
     public void delete() {
-        customerRepository.delete(customer);
+        customerService.delete(customer);
         changeHandler.onChange();
     }
 
     public void save() {
-        customerRepository.save(customer);
+        customerService.save(customer);
         changeHandler.onChange();
     }
 

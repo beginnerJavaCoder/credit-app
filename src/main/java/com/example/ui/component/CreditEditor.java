@@ -1,7 +1,7 @@
 package com.example.ui.component;
 
 import com.example.model.Credit;
-import com.example.repository.CreditRepository;
+import com.example.service.CreditService;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 public class CreditEditor extends VerticalLayout implements KeyNotifier {
 
-    private final CreditRepository creditRepository;
+    private final CreditService creditService;
     private Credit credit;
 
     private NumberField limit = new NumberField("Лимит по кредиту, ₽");
@@ -33,8 +33,8 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
     private ChangeHandler changeHandler;
 
     @Autowired
-    public CreditEditor(CreditRepository creditRepository) {
-        this.creditRepository = creditRepository;
+    public CreditEditor(CreditService creditService) {
+        this.creditService = creditService;
         limit.setWidth("10em");
         interestRate.setWidth("10em");
         add(limit, interestRate,actions);
@@ -61,7 +61,10 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
         }
 
         if (changedCredit.getId() != null) {
-            this.credit = creditRepository.findById(changedCredit.getId()).orElse(changedCredit);
+            this.credit = creditService.findById(changedCredit.getId());
+            if (credit == null) {
+                credit = changedCredit;
+            }
         } else {
             this.credit = changedCredit;
         }
@@ -74,12 +77,12 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
     }
 
     public void delete() {
-        creditRepository.delete(credit);
+        creditService.delete(credit);
         changeHandler.onChange();
     }
 
     public void save() {
-        creditRepository.save(credit);
+        creditService.save(credit);
         changeHandler.onChange();
     }
 

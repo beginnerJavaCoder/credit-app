@@ -1,7 +1,7 @@
 package com.example.ui.component;
 
 import com.example.model.Customer;
-import com.example.repository.CustomerRepository;
+import com.example.service.CustomerService;
 import com.example.ui.util.GridThemeConfigurer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Scope;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CustomerPanel extends VerticalLayout {
 
-    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
     private final CustomerEditor editor;
 
     private final Grid<Customer> grid;
@@ -30,8 +30,8 @@ public class CustomerPanel extends VerticalLayout {
     private Button add;
 
     @Autowired
-    public CustomerPanel(CustomerRepository customerRepository, CustomerEditor editor) {
-        this.customerRepository = customerRepository;
+    public CustomerPanel(CustomerService customerService, CustomerEditor editor) {
+        this.customerService = customerService;
         this.editor = editor;
 
         grid = new Grid<>(Customer.class);
@@ -90,9 +90,9 @@ public class CustomerPanel extends VerticalLayout {
 
     public void showCustomers(String filterText) {
         if (filterText.isEmpty()) {
-            grid.setItems(customerRepository.findAll());
+            grid.setItems(customerService.findAll());
         } else {
-            grid.setItems(customerRepository.findBySurnameStartingWithIgnoreCase(filterText));
+            grid.setItems(customerService.findAll(filterText));
         }
     }
 

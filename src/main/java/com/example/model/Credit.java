@@ -3,7 +3,6 @@ package com.example.model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-//TODO think about using of BigDecimal
 //TODO maybe I should add limit for number of months (time limit for pay all the credit)
 @Entity
 @Table(name = "credit")
@@ -13,9 +12,9 @@ public class Credit extends Model {
     private Double limit;
     @Column(name = "interest_rate")
     private Double interestRate;
-    @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "credit", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Bank> entries;
-    @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "credit", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CreditOffer> creditOffers;
 
     public Credit() {

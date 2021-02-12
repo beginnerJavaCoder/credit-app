@@ -1,7 +1,7 @@
 package com.example.ui.component;
 
 import com.example.model.Credit;
-import com.example.repository.CreditRepository;
+import com.example.service.CreditService;
 import com.example.ui.util.GridThemeConfigurer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Scope;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CreditPanel extends VerticalLayout {
 
-    private final CreditRepository creditRepository;
+    private final CreditService creditService;
     private final CreditEditor editor;
 
     private final Grid<Credit> grid;
@@ -30,8 +30,8 @@ public class CreditPanel extends VerticalLayout {
     private Button add;
 
     @Autowired
-    public CreditPanel(CreditRepository creditRepository, CreditEditor editor) {
-        this.creditRepository = creditRepository;
+    public CreditPanel(CreditService creditService, CreditEditor editor) {
+        this.creditService = creditService;
         this.editor = editor;
 
         grid = new Grid<>(Credit.class);
@@ -87,9 +87,9 @@ public class CreditPanel extends VerticalLayout {
 
     public void showCredits(Double filterNumber) {
         if (filterNumber == null) {
-            grid.setItems(creditRepository.findAll());
+            grid.setItems(creditService.findAll());
         } else {
-            grid.setItems(creditRepository.findByInterestRate(filterNumber));
+            grid.setItems(creditService.findAll(filterNumber));
         }
     }
 
