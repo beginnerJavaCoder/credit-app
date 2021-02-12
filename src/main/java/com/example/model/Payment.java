@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 public class Payment extends Model {
 
     private Timestamp date;
+    @Column(name = "payment_sum")
     private Double sum;
     @Column(name = "body_rep_sum")
     private Double sumOfRepaymentForCreditBody;
