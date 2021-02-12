@@ -13,3 +13,29 @@ a[highlight] {
     font-size: 1.5em;
     margin: var(--lumo-space-m);
 }
+
+/* Customer View */
+.customer-panel .content {
+    display: flex;
+}
+
+.customer-panel .customer-grid {
+    flex: 5;
+}
+
+.customer-panel .customer-editor {
+    flex: 1;
+}
+
+/* Credit View */
+.credit-panel .content {
+    display: flex;
+}
+
+.credit-panel .credit-grid {
+    flex: 5;
+}
+
+.credit-panel .credit-editor {
+    flex: 1;
+}

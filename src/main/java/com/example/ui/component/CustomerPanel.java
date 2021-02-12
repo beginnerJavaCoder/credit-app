@@ -5,6 +5,7 @@ import com.example.service.CustomerService;
 import com.example.ui.util.GridThemeConfigurer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -39,6 +40,7 @@ public class CustomerPanel extends VerticalLayout {
         upperPanel = new HorizontalLayout(filter);
 
         setSizeFull();
+        addClassName("customer-panel");
         configureGrid();
         configureFilter();
         configureUpperPanel();
@@ -49,6 +51,7 @@ public class CustomerPanel extends VerticalLayout {
     private void configureGrid() {
         GridThemeConfigurer.configureTheme(grid);
 
+        grid.addClassName("customer-grid");
         grid.setColumns("surname", "firstName", "patronymic", "passport", "phoneNumber", "email");
         grid.getColumnByKey("surname").setHeader("Фамилия");
         grid.getColumnByKey("firstName").setHeader("Имя");
@@ -78,6 +81,7 @@ public class CustomerPanel extends VerticalLayout {
             editor.setVisible(false);
             showCustomers(filter.getValue());
         });
+        editor.addClassName("customer-editor");
         add = new Button("Добавить клиента");
         add.addClickListener(e -> editor.editCustomer(new Customer()));
         grid.asSingleSelect().addValueChangeListener(e -> editor.editCustomer(e.getValue()));
@@ -85,7 +89,11 @@ public class CustomerPanel extends VerticalLayout {
 
     private void updatePanel() {
         upperPanel.add(add);
-        add(editor);
+        remove(grid);
+        Div content = new Div(grid, editor);
+        content.setSizeFull();
+        content.setClassName("content");
+        add(content);
     }
 
     public void showCustomers(String filterText) {

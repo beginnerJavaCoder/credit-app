@@ -5,6 +5,7 @@ import com.example.service.CreditService;
 import com.example.ui.util.GridThemeConfigurer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -39,6 +40,7 @@ public class CreditPanel extends VerticalLayout {
         upperPanel = new HorizontalLayout(filter);
 
         setSizeFull();
+        addClassName("credit-panel");
         configureGrid();
         configureFilter();
         configureUpperPanel();
@@ -49,6 +51,7 @@ public class CreditPanel extends VerticalLayout {
     private void configureGrid() {
         GridThemeConfigurer.configureTheme(grid);
 
+        grid.addClassName("credit-grid");
         grid.setColumns("limit", "interestRate");
         grid.getColumnByKey("limit").setHeader("Лимит по кредиту, ₽");
         grid.getColumnByKey("interestRate").setHeader("Процентная ставка, %");
@@ -75,6 +78,7 @@ public class CreditPanel extends VerticalLayout {
             editor.setVisible(false);
             showCredits(filter.getValue());
         });
+        editor.addClassName("credit-editor");
         add = new Button("Добавить кредит");
         add.addClickListener(e -> editor.editCredit(new Credit()));
         grid.asSingleSelect().addValueChangeListener(e -> editor.editCredit(e.getValue()));
@@ -82,7 +86,11 @@ public class CreditPanel extends VerticalLayout {
 
     private void updatePanel() {
         upperPanel.add(add);
-        add(editor);
+        remove(grid);
+        Div content = new Div(grid, editor);
+        content.setSizeFull();
+        content.setClassName("content");
+        add(content);
     }
 
     public void showCredits(Double filterNumber) {
