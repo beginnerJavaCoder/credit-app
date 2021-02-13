@@ -25,9 +25,9 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
     private NumberField interestRate = new NumberField("Процентная ставка, %");
 
     private Button save = new Button("Save", VaadinIcon.CHECK.create());
-    private Button cancel = new Button("Cancel");
-    private Button delete = new Button("Delete", VaadinIcon.TRASH.create());
-    private HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
+    private Button close = new Button("Cancel");
+    private Button delete = new Button("", VaadinIcon.TRASH.create());
+    private HorizontalLayout actions = new HorizontalLayout(save, close, delete);
 
     private Binder<Credit> binder = new Binder<>(Credit.class);
     private ChangeHandler changeHandler;
@@ -35,8 +35,11 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
     @Autowired
     public CreditEditor(CreditService creditService) {
         this.creditService = creditService;
-        limit.setWidth("10em");
-        interestRate.setWidth("10em");
+        limit.setWidthFull();
+        interestRate.setWidthFull();
+        actions.setWidthFull();
+        save.setWidthFull();
+        close.setWidthFull();
         add(limit, interestRate,actions);
 
         binder.bindInstanceFields(this);
@@ -50,7 +53,7 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
 
         save.addClickListener(e -> save());
         delete.addClickListener(e -> delete());
-        cancel.addClickListener(e -> editCredit(credit));
+        close.addClickListener(e -> changeHandler.onChange());
         setVisible(false);
     }
 
@@ -68,7 +71,7 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
         } else {
             this.credit = changedCredit;
         }
-        cancel.setVisible(credit.getId() != null);
+        delete.setVisible(credit.getId() != null);
         binder.setBean(credit);
 
         setVisible(true);

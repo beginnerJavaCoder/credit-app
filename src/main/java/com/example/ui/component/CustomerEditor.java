@@ -5,8 +5,8 @@ import com.example.service.CustomerService;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -33,9 +33,9 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
     private TextField passport = new TextField("Паспорт");
 
     private Button save = new Button("Save", VaadinIcon.CHECK.create());
-    private Button cancel = new Button("Cancel");
-    private Button delete = new Button("Delete", VaadinIcon.TRASH.create());
-    private HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
+    private Button close = new Button("Cancel");
+    private Button delete = new Button("", VaadinIcon.TRASH.create());
+    private HorizontalLayout actions = new HorizontalLayout(save, close, delete);
 
     private Binder<Customer> binder = new Binder<>(Customer.class);
     private ChangeHandler changeHandler;
@@ -43,6 +43,16 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
     @Autowired
     public CustomerEditor(CustomerService customerService) {
         this.customerService = customerService;
+
+        surname.setWidthFull();
+        firstName.setWidthFull();
+        patronymic.setWidthFull();
+        phoneNumber.setWidthFull();
+        email.setWidthFull();
+        passport.setWidthFull();
+        save.setWidthFull();
+        close.setWidthFull();
+        actions.setWidthFull();
 
         add(surname, firstName, patronymic, phoneNumber, email, passport, actions);
         initFieldsValidation();
@@ -57,7 +67,7 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
 
         save.addClickListener(e -> save());
         delete.addClickListener(e -> delete());
-        cancel.addClickListener(e -> editCustomer(customer));
+        close.addClickListener(e -> changeHandler.onChange());
         setVisible(false);
     }
 
@@ -148,7 +158,7 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
         } else {
             this.customer = changedCustomer;
         }
-        cancel.setVisible(customer.getId() != null);
+        delete.setVisible(customer.getId() != null);
         binder.setBean(customer);
 
         setVisible(true);
