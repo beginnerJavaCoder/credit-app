@@ -14,6 +14,8 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Objects;
+
 @SpringComponent
 @UIScope
 public class CreditEditor extends VerticalLayout implements KeyNotifier {
@@ -41,7 +43,7 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
         save.setWidthFull();
         close.setWidthFull();
         add(limit, interestRate,actions);
-
+        initFieldsValidation();
         binder.bindInstanceFields(this);
 
         setSpacing(true);
@@ -55,6 +57,31 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
         delete.addClickListener(e -> delete());
         close.addClickListener(e -> changeHandler.onChange());
         setVisible(false);
+    }
+
+    private void initFieldsValidation() {
+        binder.forField(limit)
+                .withValidator(
+                        Objects::nonNull,
+                        "Введите значение")
+                .withValidator(
+                        number -> number >= 1000,
+                        "Слишком маленькая сумма")
+                .withValidator(
+                        number -> number <= 100_000_000,
+                        "Слишком большая сумма")
+                .asRequired()
+                .bind(Credit::getLimit, Credit::setLimit);
+
+        binder.forField(interestRate)
+                .withValidator(
+                        Objects::nonNull,
+                        "Введите значение")
+                .withValidator(
+                        number -> number >= 0.1 && number <= 100,
+                        "Значение 0.1-100 %")
+                .asRequired()
+                .bind(Credit::getInterestRate, Credit::setInterestRate);
     }
 
     public void editCredit(Credit changedCredit) {
@@ -85,8 +112,10 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
     }
 
     public void save() {
-        creditService.save(credit);
-        changeHandler.onChange();
+        if (!binder.validate().hasErrors()) {
+            creditService.save(credit);
+            changeHandler.onChange();
+        }
     }
 
     public void setChangeHandler(ChangeHandler changeHandler) {

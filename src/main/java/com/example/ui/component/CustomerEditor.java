@@ -133,17 +133,6 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
                 .bind(Customer::getPassport, Customer::setPassport);
     }
 
-    private boolean isValid() {
-        if(email.getValue().isEmpty() || email.isInvalid()) return false;
-        if(surname.getValue().isEmpty() || surname.isInvalid()) return false;
-        if(firstName.getValue().isEmpty() || firstName.isInvalid()) return false;
-        if(patronymic.getValue().isEmpty() || patronymic.isInvalid()) return false;
-        if(phoneNumber.getValue().isEmpty() || phoneNumber.isInvalid()) return false;
-        if(passport.getValue().isEmpty() || passport.isInvalid()) return false;
-
-        return true;
-    }
-
     public void editCustomer(Customer changedCustomer) {
         if (changedCustomer == null) {
             setVisible(false);
@@ -172,7 +161,7 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
     }
 
     public void save() {
-        if (isValid()) {
+        if (!binder.validate().hasErrors()) {
             customerService.save(customer);
             changeHandler.onChange();
         }
