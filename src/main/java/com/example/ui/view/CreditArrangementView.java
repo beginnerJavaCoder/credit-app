@@ -10,7 +10,9 @@ import com.example.ui.component.CustomerPanel;
 import com.example.ui.layout.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -120,10 +122,10 @@ public class CreditArrangementView extends VerticalLayout {
     private void initStageThree() {
         remove(creditPanel);
         chooseCreditParams = new Label("3) Выберите срок кредита и сумму");
-        creditSum = new NumberField();
+        creditSum = new NumberField("Сумма кредита, ₽");
         creditSum.setMin(1);
         creditSum.setMax(chosenCredit.getLimit());
-        creditTerm = new NumberField();
+        creditTerm = new NumberField("Срок кредита, мес.");
         //TODO add field termLimit in credit table
         creditTerm.setMin(1);
         creditTerm.setMax(36);
@@ -132,6 +134,7 @@ public class CreditArrangementView extends VerticalLayout {
         doCalculations.addClickListener(e -> initStageFour());
 
         HorizontalLayout creditParamsPanel = new HorizontalLayout(creditSum, creditTerm, doCalculations);
+        creditParamsPanel.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
 
         add(chooseCreditParams, creditParamsPanel);
     }
@@ -146,11 +149,12 @@ public class CreditArrangementView extends VerticalLayout {
         creditOffer.setCustomer(chosenCustomer);
 //        chosenCustomer.getCreditOffers().add(creditOffer);
         creditOffer.setPaymentSchedule(creditOfferService.calculatePaymentSchedule(creditOffer));
-        Label l1 = new Label("Общая сумма" + creditOfferService.getTotalAmountOfCredit(creditOffer).toString());
-        Label l2 = new Label("Сумма переплаты по процентам" + creditOfferService.getTotalAmountOfInterestRate(creditOffer).toString());
-        Label l3 = new Label("Сумма ежемесячного платежа" + creditOfferService.getMonthlyPaymentAmount(creditOffer).toString());
+        Label l1 = new Label("Общая сумма: " + creditOfferService.getTotalAmountOfCredit(creditOffer).toString());
+        Label l2 = new Label("Сумма переплаты по процентам: " + creditOfferService.getTotalAmountOfInterestRate(creditOffer).toString());
+        Label l3 = new Label("Сумма ежемесячного платежа: " + creditOfferService.getMonthlyPaymentAmount(creditOffer).toString());
 
         Grid<Payment> paymentGrid = new Grid<>(Payment.class);
+        paymentGrid.setSizeFull();
         paymentGrid.setColumns("sum", "sumOfRepaymentForCreditPercents", "sumOfRepaymentForCreditBody");
         paymentGrid.getColumnByKey("sum").setHeader("Сумма платежа");
         paymentGrid.getColumnByKey("sumOfRepaymentForCreditPercents").setHeader("Процентная часть");
@@ -161,7 +165,7 @@ public class CreditArrangementView extends VerticalLayout {
         arrangeCreditOffer.addClickListener(e -> {
             creditOfferService.save(creditOffer);
             removeAll();
-            add(new Label("Кредит успешно оформлен!"));
+            add(new H4("Кредит успешно оформлен!"));
         });
 
         add(l1, l2, l3, arrangeCreditOffer, paymentGrid);
