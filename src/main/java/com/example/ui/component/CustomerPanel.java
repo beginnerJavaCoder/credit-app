@@ -52,6 +52,7 @@ public class CustomerPanel extends VerticalLayout {
         GridThemeConfigurer.configureTheme(grid);
 
         grid.addClassName("customer-grid");
+        grid.setSizeFull();
         grid.setColumns("surname", "firstName", "patronymic", "passport", "phoneNumber", "email");
         grid.getColumnByKey("surname").setHeader("Фамилия");
         grid.getColumnByKey("firstName").setHeader("Имя");
