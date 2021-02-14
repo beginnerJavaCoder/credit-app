@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,28 +43,51 @@ public class CreditDetailsPanel extends VerticalLayout {
         this.creditOfferService = creditOfferService;
         paymentGrid = new Grid<>(Payment.class);
         upperGridPanel = new VerticalLayout();
+        upperPanel = new HorizontalLayout();
 
         setSizeFull();
         configureGrid();
-        configureUpperPanel();
 
         add(new Label("3) Выберите срок кредита и сумму"), upperPanel, upperGridPanel, paymentGrid);
     }
 
     private void configureUpperPanel() {
         creditSum = new NumberField("Сумма кредита, ₽");
+        creditSum.setMin(1000);
+        creditSum.setMax(chosenCredit.getLimit());
         creditTerm = new NumberField("Срок кредита, мес.");
+        creditTerm.setMin(12);
+        creditTerm.setMax(60);
 
         configureCalculateButton();
 
-        upperPanel = new HorizontalLayout(creditSum, creditTerm, calculateButton);
+        upperPanel.add(creditSum, creditTerm, calculateButton);
         upperPanel.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
     }
 
     private void configureCalculateButton() {
         calculateButton = new Button("Рассчитать график платежей");
         calculateButton.setWidth("20em");
-        calculateButton.addClickListener(e -> calculateCreditParams());
+        calculateButton.addClickListener(e -> {
+            if (isValid()) {
+                calculateCreditParams();
+            }
+        });
+    }
+
+    private boolean isValid() {
+        if (creditSum.isInvalid()) {
+            return false;
+        }
+        if (creditTerm.isInvalid()) {
+            return false;
+        }
+        Double tmp = creditTerm.getValue();
+        if (tmp % tmp.intValue() != 0) {
+            return false;
+        }
+
+        return true;
     }
 
     private void calculateCreditParams() {
@@ -116,6 +140,7 @@ public class CreditDetailsPanel extends VerticalLayout {
 
     public void setChosenCredit(Credit chosenCredit) {
         this.chosenCredit = chosenCredit;
+        configureUpperPanel();
     }
 
     public HorizontalLayout getUpperPanel() {
