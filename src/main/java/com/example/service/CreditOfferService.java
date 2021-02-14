@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface CreditOfferService {
 
-    Double getMonthlyPaymentAmount(CreditOffer creditOffer);
-    Double getTotalAmountOfCredit(CreditOffer creditOffer);
-    Double getTotalAmountOfInterestRate(CreditOffer creditOffer);
-    List<Payment> calculatePaymentSchedule(CreditOffer creditOffer);
+    Double getMonthlyPaymentAmount(CreditOffer creditOffer, Double months);
+    Double getTotalAmountOfCredit(CreditOffer creditOffer, Double months);
+    Double getTotalAmountOfInterestRate(CreditOffer creditOffer, Double months);
+    List<Payment> calculatePaymentSchedule(CreditOffer creditOffer, Double months);
     void save(CreditOffer creditOffer);
 }

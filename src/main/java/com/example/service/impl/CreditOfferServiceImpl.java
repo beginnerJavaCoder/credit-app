@@ -23,12 +23,11 @@ public class CreditOfferServiceImpl implements CreditOfferService {
         this.paymentService = paymentService;
     }
 
-    public Double getMonthlyPaymentAmount(CreditOffer creditOffer) {
+    public Double getMonthlyPaymentAmount(CreditOffer creditOffer, Double months) {
         Double interestRate = creditOffer.getCredit().getInterestRate();
         Double creditAmount = creditOffer.getCreditAmount();
         Double monthlyInterestRate = getMonthlyInterestRate(interestRate);
-        //TODO change amount of months
-        Double tmp = Math.pow(1 + monthlyInterestRate, 36);
+        Double tmp = Math.pow(1 + monthlyInterestRate, months.intValue());
         Double monthlyPaymentAmount = creditAmount * ((monthlyInterestRate * tmp) / (tmp - 1));
 
         return monthlyPaymentAmount;
@@ -38,24 +37,22 @@ public class CreditOfferServiceImpl implements CreditOfferService {
         return (interestRate / 100.0) / 12.0;
     }
 
-    public Double getTotalAmountOfCredit(CreditOffer creditOffer) {
-        //TODO type months
-        return 36 * getMonthlyPaymentAmount(creditOffer);
+    public Double getTotalAmountOfCredit(CreditOffer creditOffer, Double months) {
+        return months.intValue() * getMonthlyPaymentAmount(creditOffer, months);
     }
 
-    public Double getTotalAmountOfInterestRate(CreditOffer creditOffer) {
-        return getTotalAmountOfCredit(creditOffer) - creditOffer.getCreditAmount();
+    public Double getTotalAmountOfInterestRate(CreditOffer creditOffer, Double months) {
+        return getTotalAmountOfCredit(creditOffer, months) - creditOffer.getCreditAmount();
     }
 
     @Override
-    public List<Payment> calculatePaymentSchedule(CreditOffer creditOffer) {
+    public List<Payment> calculatePaymentSchedule(CreditOffer creditOffer, Double months) {
         List<Payment> paymentSchedule = new ArrayList<>();
-        Double monthlyPaymentAmount = getMonthlyPaymentAmount(creditOffer);
+        Double monthlyPaymentAmount = getMonthlyPaymentAmount(creditOffer, months);
         Double totalCreditAmount = creditOffer.getCreditAmount();
         Double monthlyInterestRate = getMonthlyInterestRate(creditOffer.getCredit().getInterestRate());
-        //TODO change 36 months
         Payment tmp;
-        for (int i = 0; i < 36; i++) {
+        for (int i = 0; i < months.intValue(); i++) {
             tmp = paymentService.calculatePayment(monthlyPaymentAmount, totalCreditAmount, monthlyInterestRate);
             paymentSchedule.add(tmp);
             totalCreditAmount -= tmp.getSumOfRepaymentForCreditBody();

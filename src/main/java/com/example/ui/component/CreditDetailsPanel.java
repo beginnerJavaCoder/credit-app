@@ -98,9 +98,12 @@ public class CreditDetailsPanel extends VerticalLayout {
     }
 
     private void configureUpperGridPanel() {
-        Label l1 = new Label("Общая сумма: " + creditOfferService.getTotalAmountOfCredit(creditOffer).toString());
-        Label l2 = new Label("Сумма переплаты по процентам: " + creditOfferService.getTotalAmountOfInterestRate(creditOffer).toString());
-        Label l3 = new Label("Сумма ежемесячного платежа: " + creditOfferService.getMonthlyPaymentAmount(creditOffer).toString());
+        Label l1 = new Label("Общая сумма: " + creditOfferService.
+                getTotalAmountOfCredit(creditOffer, creditTerm.getValue()).toString());
+        Label l2 = new Label("Сумма переплаты по процентам: " + creditOfferService.
+                getTotalAmountOfInterestRate(creditOffer, creditTerm.getValue()).toString());
+        Label l3 = new Label("Сумма ежемесячного платежа: " + creditOfferService.
+                getMonthlyPaymentAmount(creditOffer, creditTerm.getValue()).toString());
 
         configureArrangeCreditOfferButton();
         upperGridPanel.removeAll();
@@ -131,7 +134,7 @@ public class CreditDetailsPanel extends VerticalLayout {
         creditOffer.setCredit(chosenCredit);
         creditOffer.setCreditAmount(creditSum.getValue());
         creditOffer.setCustomer(chosenCustomer);
-        creditOffer.setPaymentSchedule(creditOfferService.calculatePaymentSchedule(creditOffer));
+        creditOffer.setPaymentSchedule(creditOfferService.calculatePaymentSchedule(creditOffer, creditTerm.getValue()));
     }
 
     public void setChosenCustomer(Customer chosenCustomer) {
