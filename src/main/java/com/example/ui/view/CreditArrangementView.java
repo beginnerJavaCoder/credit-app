@@ -1,21 +1,14 @@
 package com.example.ui.view;
 
 import com.example.model.Credit;
-import com.example.model.CreditOffer;
 import com.example.model.Customer;
-import com.example.model.Payment;
-import com.example.service.CreditOfferService;
 import com.example.ui.component.CreditDetailsPanel;
 import com.example.ui.component.CreditPanel;
 import com.example.ui.component.CustomerPanel;
 import com.example.ui.layout.MainLayout;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;

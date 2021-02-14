@@ -3,7 +3,7 @@ package com.example.model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-//TODO maybe I should add limit for number of months (time limit for pay all the credit)
+
 @Entity
 @Table(name = "credit")
 public class Credit extends Model {
