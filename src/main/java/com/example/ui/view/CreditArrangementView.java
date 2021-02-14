@@ -5,6 +5,7 @@ import com.example.model.CreditOffer;
 import com.example.model.Customer;
 import com.example.model.Payment;
 import com.example.service.CreditOfferService;
+import com.example.ui.component.CreditDetailsPanel;
 import com.example.ui.component.CreditPanel;
 import com.example.ui.component.CustomerPanel;
 import com.example.ui.layout.MainLayout;
@@ -12,7 +13,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -26,46 +26,35 @@ public class CreditArrangementView extends VerticalLayout {
 
     private final CustomerPanel customerPanel;
     private final CreditPanel creditPanel;
+    private final CreditDetailsPanel creditDetailsPanel;
 
-    private final CreditOfferService creditOfferService;
-
-
-    private final Label chooseCustomerLabel;
-    private final Label chooseCreditLabel;
-    private Label chooseCreditParams;
-
-    private final Button customerChoosingButton;
+    private Button customerChoosingButton;
     private Button creditChoosingButton;
-    private Button doCalculations;
-
-    private NumberField creditSum;
-    private NumberField creditTerm;
 
     private Customer chosenCustomer;
     private Credit chosenCredit;
-    private CreditOffer creditOffer;
 
     @Autowired
     public CreditArrangementView(CustomerPanel customerPanel,
                                  CreditPanel creditPanel,
-                                 CreditOfferService creditOfferService) {
+                                 CreditDetailsPanel creditDetailsPanel) {
 
         this.customerPanel = customerPanel;
         this.creditPanel = creditPanel;
-        this.creditOfferService = creditOfferService;
-
-        chooseCustomerLabel = new Label("1) Выберите клиента из списка ");
-        chooseCreditLabel = new Label("2) Выберите подходящий клиенту кредит");
-
-        customerChoosingButton = new Button("Перейти к выбору кредита ->");
-        customerChoosingButton.setWidth("20em");
-        customerChoosingButton.setVisible(false);
-        customerChoosingButton.addClickListener(e -> initStageTwo());
-
-        HorizontalLayout upperPanel = customerPanel.getUpperPanel();
-        upperPanel.add(chooseCustomerLabel, customerChoosingButton);
+        this.creditDetailsPanel = creditDetailsPanel;
 
         setSizeFull();
+        initChooseCustomerStage();
+    }
+
+    private void initChooseCustomerStage() {
+        removeAll();
+
+        configureCustomerChoosingButton();
+
+        Label chooseCustomerLabel = new Label("1) Выберите клиента из списка ");
+        customerPanel.getUpperPanel().add(chooseCustomerLabel, customerChoosingButton);
+
         configureCustomerGrid();
 
         add(customerPanel);
@@ -73,101 +62,67 @@ public class CreditArrangementView extends VerticalLayout {
         customerPanel.showCustomers("");
     }
 
+    private void configureCustomerChoosingButton() {
+        customerChoosingButton = new Button("Перейти к выбору кредита ->");
+        customerChoosingButton.setWidth("20em");
+        customerChoosingButton.setVisible(false);
+        customerChoosingButton.addClickListener(e -> initChooseCreditStage());
+    }
+
     private void configureCustomerGrid() {
         customerPanel.getGrid()
                 .asSingleSelect()
-                .addValueChangeListener(e -> changeButtonState(e.getValue(), customerChoosingButton));
+                .addValueChangeListener(e -> {
+                    if (e.getValue() == null) {
+                        customerChoosingButton.setVisible(false);
+                    } else {
+                        chosenCustomer = e.getValue();
+                        customerChoosingButton.setVisible(true);
+                    }
+                });
     }
 
-    private void configureCreditGrid() {
-        creditPanel.getGrid()
-                .asSingleSelect()
-                .addValueChangeListener(e -> changeCreditButtonState(e.getValue(), creditChoosingButton));
-    }
+    private void initChooseCreditStage() {
+        removeAll();
 
-    private void changeButtonState(Customer customer, Button button) {
-        if (customer == null) {
-            button.setVisible(false);
-        } else {
-            chosenCustomer = customer;
-            button.setVisible(true);
-        }
-    }
+        configureCreditChoosingButton();
 
-    private void changeCreditButtonState(Credit credit, Button button) {
-        if (credit == null) {
-            button.setVisible(false);
-        } else {
-            chosenCredit = credit;
-            button.setVisible(true);
-        }
-    }
-
-    private void initStageTwo() {
-        remove(customerPanel);
+        Label chooseCreditLabel = new Label("2) Выберите подходящий клиенту кредит");
+        creditPanel.getUpperPanel().add(chooseCreditLabel, creditChoosingButton);
 
         configureCreditGrid();
-        creditChoosingButton = new Button("Перейти к выбору параметров кредита ->");
-        creditChoosingButton.setWidth("30em");
-        creditChoosingButton.setVisible(false);
-        creditChoosingButton.addClickListener(e -> initStageThree());
-        HorizontalLayout upperPanel = creditPanel.getUpperPanel();
-        upperPanel.add(chooseCreditLabel, creditChoosingButton);
 
         add(creditPanel);
 
         creditPanel.showCredits(null);
     }
 
-    private void initStageThree() {
-        remove(creditPanel);
-        chooseCreditParams = new Label("3) Выберите срок кредита и сумму");
-        creditSum = new NumberField("Сумма кредита, ₽");
-        creditSum.setMin(1);
-        creditSum.setMax(chosenCredit.getLimit());
-        creditTerm = new NumberField("Срок кредита, мес.");
-        //TODO add field termLimit in credit table
-        creditTerm.setMin(1);
-        creditTerm.setMax(36);
-        doCalculations = new Button("Перейти к расчетам параметров ->");
-        doCalculations.setWidth("25em");
-        doCalculations.addClickListener(e -> initStageFour());
-
-        HorizontalLayout creditParamsPanel = new HorizontalLayout(creditSum, creditTerm, doCalculations);
-        creditParamsPanel.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
-
-        add(chooseCreditParams, creditParamsPanel);
+    private void configureCreditChoosingButton() {
+        creditChoosingButton = new Button("Перейти к выбору параметров кредита ->");
+        creditChoosingButton.setWidth("30em");
+        creditChoosingButton.setVisible(false);
+        creditChoosingButton.addClickListener(e -> initChooseCreditParamsStage());
     }
 
-    private void initStageFour() {
+    private void configureCreditGrid() {
+        creditPanel.getGrid()
+                .asSingleSelect()
+                .addValueChangeListener(e -> {
+                    if (e.getValue() == null) {
+                        creditChoosingButton.setVisible(false);
+                    } else {
+                        chosenCredit = e.getValue();
+                        creditChoosingButton.setVisible(true);
+                    }
+                });
+    }
+
+    private void initChooseCreditParamsStage() {
         removeAll();
-        creditOffer = new CreditOffer();
-        creditOffer.setCredit(chosenCredit);
-        creditOffer.setCreditAmount(creditSum.getValue());
-        //TODO think about bidirectional relations (how to update it correctly?)
-//        chosenCredit.getCreditOffers().add(creditOffer);
-        creditOffer.setCustomer(chosenCustomer);
-//        chosenCustomer.getCreditOffers().add(creditOffer);
-        creditOffer.setPaymentSchedule(creditOfferService.calculatePaymentSchedule(creditOffer));
-        Label l1 = new Label("Общая сумма: " + creditOfferService.getTotalAmountOfCredit(creditOffer).toString());
-        Label l2 = new Label("Сумма переплаты по процентам: " + creditOfferService.getTotalAmountOfInterestRate(creditOffer).toString());
-        Label l3 = new Label("Сумма ежемесячного платежа: " + creditOfferService.getMonthlyPaymentAmount(creditOffer).toString());
 
-        Grid<Payment> paymentGrid = new Grid<>(Payment.class);
-        paymentGrid.setSizeFull();
-        paymentGrid.setColumns("sum", "sumOfRepaymentForCreditPercents", "sumOfRepaymentForCreditBody");
-        paymentGrid.getColumnByKey("sum").setHeader("Сумма платежа");
-        paymentGrid.getColumnByKey("sumOfRepaymentForCreditPercents").setHeader("Процентная часть");
-        paymentGrid.getColumnByKey("sumOfRepaymentForCreditBody").setHeader("Долговая часть");
-        paymentGrid.setItems(creditOffer.getPaymentSchedule());
-        Button arrangeCreditOffer = new Button("Оформить кредит");
-        arrangeCreditOffer.setWidth("15em");
-        arrangeCreditOffer.addClickListener(e -> {
-            creditOfferService.save(creditOffer);
-            removeAll();
-            add(new H4("Кредит успешно оформлен!"));
-        });
+        creditDetailsPanel.setChosenCredit(chosenCredit);
+        creditDetailsPanel.setChosenCustomer(chosenCustomer);
 
-        add(l1, l2, l3, arrangeCreditOffer, paymentGrid);
+        add(creditDetailsPanel);
     }
 }
