@@ -23,40 +23,43 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
     private final CreditService creditService;
     private Credit credit;
 
-    private NumberField limit = new NumberField("Лимит по кредиту, ₽");
-    private NumberField interestRate = new NumberField("Процентная ставка, %");
+    private final NumberField limit;
+    private final NumberField interestRate;
 
-    private Button save = new Button("Save", VaadinIcon.CHECK.create());
-    private Button close = new Button("Cancel");
-    private Button delete = new Button("", VaadinIcon.TRASH.create());
-    private HorizontalLayout actions = new HorizontalLayout(save, close, delete);
+    private final Button save;
+    private final Button close;
+    private final Button delete;
+    private final HorizontalLayout actions;
 
-    private Binder<Credit> binder = new Binder<>(Credit.class);
+    private final Binder<Credit> binder;
     private ChangeHandler changeHandler;
 
     @Autowired
     public CreditEditor(CreditService creditService) {
         this.creditService = creditService;
+        binder = new Binder<>(Credit.class);
+        limit = new NumberField("Лимит по кредиту, ₽");
+        interestRate = new NumberField("Процентная ставка, %");
+        save = new Button("Save", VaadinIcon.CHECK.create());
+        close = new Button("Cancel");
+        delete = new Button("", VaadinIcon.TRASH.create());
+        actions = new HorizontalLayout(save, close, delete);
+
+        configureFormWidth();
+        binder.bindInstanceFields(this);
+        initFieldsValidation();
+        setSpacing(true);
+        setVisible(false);
+        configureButtons();
+        add(limit, interestRate, actions);
+    }
+
+    private void configureFormWidth() {
         limit.setWidthFull();
         interestRate.setWidthFull();
         actions.setWidthFull();
         save.setWidthFull();
         close.setWidthFull();
-        add(limit, interestRate,actions);
-        initFieldsValidation();
-        binder.bindInstanceFields(this);
-
-        setSpacing(true);
-
-        save.getElement().getThemeList().add("primary");
-        delete.getElement().getThemeList().add("error");
-
-        addKeyPressListener(Key.ENTER, e -> save());
-
-        save.addClickListener(e -> save());
-        delete.addClickListener(e -> delete());
-        close.addClickListener(e -> changeHandler.onChange());
-        setVisible(false);
     }
 
     private void initFieldsValidation() {
@@ -82,6 +85,17 @@ public class CreditEditor extends VerticalLayout implements KeyNotifier {
                         "Значение 0.1-100 %")
                 .asRequired()
                 .bind(Credit::getInterestRate, Credit::setInterestRate);
+    }
+
+    private void configureButtons() {
+        save.getElement().getThemeList().add("primary");
+        delete.getElement().getThemeList().add("error");
+
+        addKeyPressListener(Key.ENTER, e -> save());
+
+        save.addClickListener(e -> save());
+        delete.addClickListener(e -> delete());
+        close.addClickListener(e -> changeHandler.onChange());
     }
 
     public void editCredit(Credit changedCredit) {

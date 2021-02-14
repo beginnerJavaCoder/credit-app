@@ -6,7 +6,6 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -25,25 +24,46 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
     private final CustomerService customerService;
     private Customer customer;
 
-    private TextField surname = new TextField("Фамилия");
-    private TextField firstName = new TextField("Имя");
-    private TextField patronymic = new TextField("Отчество");
-    private TextField phoneNumber = new TextField("Номер телефона");
-    private EmailField email = new EmailField("Email");
-    private TextField passport = new TextField("Паспорт");
+    private final TextField surname;
+    private final TextField firstName;
+    private final TextField patronymic;
+    private final TextField phoneNumber;
+    private final EmailField email;
+    private final TextField passport;
 
-    private Button save = new Button("Save", VaadinIcon.CHECK.create());
-    private Button close = new Button("Cancel");
-    private Button delete = new Button("", VaadinIcon.TRASH.create());
-    private HorizontalLayout actions = new HorizontalLayout(save, close, delete);
+    private final Button save;
+    private final Button close;
+    private final Button delete;
+    private final HorizontalLayout actions;
 
-    private Binder<Customer> binder = new Binder<>(Customer.class);
+    private final Binder<Customer> binder;
     private ChangeHandler changeHandler;
 
     @Autowired
     public CustomerEditor(CustomerService customerService) {
         this.customerService = customerService;
+        binder = new Binder<>(Customer.class);
+        surname = new TextField("Фамилия");
+        firstName = new TextField("Имя");
+        patronymic = new TextField("Отчество");
+        phoneNumber = new TextField("Номер телефона");
+        email = new EmailField("Email");
+        passport = new TextField("Паспорт");
+        save = new Button("Save", VaadinIcon.CHECK.create());
+        close = new Button("Cancel");
+        delete = new Button("", VaadinIcon.TRASH.create());
+        actions = new HorizontalLayout(save, close, delete);
 
+        configureFormWidth();
+        binder.bindInstanceFields(this);
+        initFieldsValidation();
+        setSpacing(true);
+        setVisible(false);
+        configureButtons();
+        add(surname, firstName, patronymic, phoneNumber, email, passport, actions);
+    }
+
+    private void configureFormWidth() {
         surname.setWidthFull();
         firstName.setWidthFull();
         patronymic.setWidthFull();
@@ -53,22 +73,6 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
         save.setWidthFull();
         close.setWidthFull();
         actions.setWidthFull();
-
-        add(surname, firstName, patronymic, phoneNumber, email, passport, actions);
-        initFieldsValidation();
-        binder.bindInstanceFields(this);
-
-        setSpacing(true);
-
-        save.getElement().getThemeList().add("primary");
-        delete.getElement().getThemeList().add("error");
-
-        addKeyPressListener(Key.ENTER, e -> save());
-
-        save.addClickListener(e -> save());
-        delete.addClickListener(e -> delete());
-        close.addClickListener(e -> changeHandler.onChange());
-        setVisible(false);
     }
 
     private void initFieldsValidation() {
@@ -131,6 +135,17 @@ public class CustomerEditor extends VerticalLayout implements KeyNotifier {
                         "\\d{10}"))
                 .asRequired()
                 .bind(Customer::getPassport, Customer::setPassport);
+    }
+
+    private void configureButtons() {
+        save.getElement().getThemeList().add("primary");
+        delete.getElement().getThemeList().add("error");
+
+        addKeyPressListener(Key.ENTER, e -> save());
+
+        save.addClickListener(e -> save());
+        delete.addClickListener(e -> delete());
+        close.addClickListener(e -> changeHandler.onChange());
     }
 
     public void editCustomer(Customer changedCustomer) {
